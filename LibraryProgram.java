@@ -1,3 +1,5 @@
+import Library.exceptions.DoesNotExistException;
+
 public class LibraryProgram {
 
     static Library lib = new Library();
@@ -8,9 +10,16 @@ public class LibraryProgram {
         lib.addTitle(new Book(102, "Lord of the rings", "J.R.R. Tolkin"));
         lib.addTitle(new Journal(103, "Data System", "Mirko Mirkovic"));
 
-        lib.addBorrowable(new BookCopy(1, (Book) (lib.findTitleByID(1))));
-        lib.addBorrowable(new BookCopy(2, (Book) (lib.findTitleByID(1))));
-        lib.addBorrowable(new BookCopy(3, (Book) (lib.findTitleByID(3))));
+        try {
+            lib.addBorrowable(new BookCopy(1, (Book) (lib.findTitleByID(1))));
+            lib.addBorrowable(new BookCopy(2, (Book) (lib.findTitleByID(1))));
+            lib.addBorrowable(new BookCopy(3, (Book) (lib.findTitleByID(3))));
+        }
+
+        catch (DoesNotExistException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
 
         lib.displayAllBorrowables();
 
@@ -25,24 +34,18 @@ public class LibraryProgram {
         lib.displayBorrowedItems();
 
         returnLoan();
-        
+
         lib.displayAllBorrowables();
         lib.displayBorrowedItems();
     }
 
-    public static void addMember() {
-        System.out.println("\n\n ADD NEW MEMBER");
+    public static void addMember(int id, String name) throws AlreadyExistsException {
+        if (containsId(id))
+            throw new AlreadyExistsException("Member already exist with id:" + id);
 
-        System.out.println("Please, provide new member's name: ");
-        String memberName = scan.nextLine();
-
-        System.out.println("Please, provide new member's ID: ");
-        int memberID = scan.nextInt();
-        scan.nextLine();
-
-        lib.addMember(memberID, memberName);
+        member.add(new Member(id, name));
     }
-    
+
     public static void newLoan() {
         System.out.println("\nFUNCTIONALITY: BORROW A BOOK COPY");
 
@@ -52,14 +55,14 @@ public class LibraryProgram {
 
         System.out.print("Enter Book Copy ID to borrow: ");
         int copyId = scan.nextInt();
-        scan.nextLine(); 
+        scan.nextLine();
 
         Member m;
         Borrowable b;
 
-       m = lib.findMemberByID(memberId);
-       b = lib.findBorrowableByID(borID);
-       m.borrows(b);
+        m = lib.findMemberByID(memberId);
+        b = lib.findBorrowableByID(borID);
+        m.borrows(b);
     }
 
     public static void returnLoan() {
